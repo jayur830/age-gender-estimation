@@ -129,16 +129,3 @@ def create_model():
         metrics=["accuracy"])
 
     return model
-
-
-if __name__ == "__main__":
-    vgg = VGG16(
-        weights="imagenet",
-        include_top=False)
-    # vgg.trainable = False
-    for layer in vgg.layers:
-        if not "block5_conv" in layer.name:
-            layer.trainable = False
-
-    vgg.compile(optimizer=optimizers.Adam(), loss="categorical_crossentropy")
-    vgg.summary()
