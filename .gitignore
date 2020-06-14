@@ -1,3 +1,6 @@
-_imdb.json
+*.h5
+*.json
+file_count.py
+graph/
 checkpoint/
 venv/

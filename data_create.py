@@ -1,27 +1,38 @@
 import os
 import cv2
 import h5py
+import random
 from keras.utils import to_categorical
 
-dst_path = "D:/Dataset/face_dataset/"
-src_path = dst_path + "imdb_train/"
+dst_path = "D:/Dataset/utk_dataset/"
 
-with h5py.File(dst_path + "train.hdf5", "w") as f:
-    data_size = 1531892
-    x_data = f.create_dataset("x_data", shape=(data_size, 63, 63, 3), dtype="float32")
-    y_gender = f.create_dataset("y_gender", shape=(data_size, 2), dtype="float32")
-    y_age = f.create_dataset("y_age", shape=(data_size, 60), dtype="float32")
+data_category = ["train", "val", "test"]
+data_sizes = [740826, 88902, 83668]
 
-    folders = os.listdir(src_path)
-    i = 0
-    for folder in folders:
-        file_list = os.listdir(src_path + folder)
+for i in range(len(data_category)):
+    src_path = dst_path + "utk_{}/".format(data_category[i])
+    with h5py.File(dst_path + "{}.hdf5".format(data_category[i]), "w") as f:
+        folders = os.listdir(src_path)
+        file_list = []
+        for age in folders:
+            if os.path.exists(src_path + age + "/0"):
+                file_list += os.listdir(src_path + age + "/0")
+            if os.path.exists(src_path + age + "/1"):
+                file_list += os.listdir(src_path + age + "/1")
+        random.shuffle(file_list)
+        random.shuffle(file_list)
+
+        x_data = f.create_dataset("x_data", shape=(len(file_list), 63, 63, 3), dtype="float32")
+        y_gender = f.create_dataset("y_gender", shape=(len(file_list), 2), dtype="float32")
+        y_age = f.create_dataset("y_age", shape=(len(file_list), 6), dtype="float32")
+
+        j = 0
         for filename in file_list:
             gender, age, _, _ = filename.split("_")
-            img = cv2.imread(src_path + folder + "/" + filename).astype("float32") / 255.
-            x_data[i] = img
-            y_gender[i] = to_categorical(int(gender), num_classes=2)
-            y_age[i] = to_categorical(int(age) - 10, num_classes=60)
-            if i % 10 == 0:
-                print("{}/{}".format(i, data_size))
-            i += 1
+            img = cv2.imread(src_path + age + "/" + str(gender) + "/" + filename).astype("float32") / 255.
+            x_data[j] = img
+            y_gender[j] = to_categorical(int(gender) ^ 1, num_classes=2)
+            y_age[j] = to_categorical(int((int(age) - 10) / 10), num_classes=6)
+            j += 1
+            if j % 10 == 0:
+                print("{}/{}".format(j, data_sizes[i]))
