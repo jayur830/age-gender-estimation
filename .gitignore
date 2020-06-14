@@ -2,5 +2,6 @@
 *.json
 file_count.py
 graph/
+__pycache__
 checkpoint/
 venv/
