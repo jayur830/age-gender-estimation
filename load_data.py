@@ -1,36 +1,37 @@
-from keras.utils import HDF5Matrix
-
-
-def load_data():
-    root_path = "D:/Dataset/utk_dataset/"
-    train_x_data = HDF5Matrix(root_path + "train.hdf5", "x_data")
-    train_y_gender = HDF5Matrix(root_path + "train.hdf5", "y_gender")
-    train_y_age = HDF5Matrix(root_path + "train.hdf5", "y_age")
-    val_x_data = HDF5Matrix(root_path + "val.hdf5", "x_data")
-    val_y_gender = HDF5Matrix(root_path + "val.hdf5", "y_gender")
-    val_y_age = HDF5Matrix(root_path + "val.hdf5", "y_age")
-    test_x_data = HDF5Matrix(root_path + "test.hdf5", "x_data")
-    test_y_gender = HDF5Matrix(root_path + "test.hdf5", "y_gender")
-    test_y_age = HDF5Matrix(root_path + "test.hdf5", "y_age")
-
-    return train_x_data, train_y_gender, train_y_age, \
-        val_x_data, val_y_gender, val_y_age, \
-        test_x_data, test_y_gender, test_y_age
-
-# from keras.utils import to_categorical
-# import os
-# import random
-# import cv2
-# import numpy as np
+# from keras.utils import HDF5Matrix
 #
 #
 # def load_data():
-#     root_path = "C:/Users/OwlNight/Dataset/utkcropped/"
-#     file_list = os.listdir(root_path)
+#     root_path = "D:/Dataset/utk_dataset/"
+#     train_x_data = HDF5Matrix(root_path + "train.hdf5", "x_data")
+#     train_y_gender = HDF5Matrix(root_path + "train.hdf5", "y_gender")
+#     train_y_age = HDF5Matrix(root_path + "train.hdf5", "y_age")
+#     val_x_data = HDF5Matrix(root_path + "val.hdf5", "x_data")
+#     val_y_gender = HDF5Matrix(root_path + "val.hdf5", "y_gender")
+#     val_y_age = HDF5Matrix(root_path + "val.hdf5", "y_age")
+#     test_x_data = HDF5Matrix(root_path + "test.hdf5", "x_data")
+#     test_y_gender = HDF5Matrix(root_path + "test.hdf5", "y_gender")
+#     test_y_age = HDF5Matrix(root_path + "test.hdf5", "y_age")
+#
+#     return train_x_data, train_y_gender, train_y_age, \
+#         val_x_data, val_y_gender, val_y_age, \
+#         test_x_data, test_y_gender, test_y_age
+
+from keras.utils import to_categorical
+import os
+import random
+import cv2
+import numpy as np
+
+
+# def load_data():
+#     # root_path = "C:/Users/OwlNight/Dataset/utkcropped/"
+#     root_path = "utk_data/"
 #     dataset, train_x_data, train_y_gender, train_y_age, \
 #         val_x_data, val_y_gender, val_y_age, \
 #         test_x_data, test_y_gender, test_y_age = [{}, {}], [], [], [], [], [], [], [], [], []
 #
+#     file_list = os.listdir(root_path + "utk_train")
 #     for file in file_list:
 #         age, gender, _, _ = file.split("_")
 #         gender = int(gender) ^ 1
@@ -119,5 +120,66 @@ def load_data():
 #         test_x_data, test_y_gender, test_y_age
 
 
-# if __name__ == '__main__':
-#     load_data()
+def load_data():
+    train_data_list = os.listdir("utk_data/utk_train")
+    val_data_list = os.listdir("utk_data/utk_val")
+    test_data_list = os.listdir("utk_data/utk_test")
+
+    random.shuffle(train_data_list)
+    random.shuffle(val_data_list)
+    random.shuffle(test_data_list)
+
+    train_x_data, val_x_data, test_x_data = [], [], []
+    train_y_gender, val_y_gender, test_y_gender = [], [], []
+    train_y_age, val_y_age, test_y_age = [], [], []
+
+    i = 0
+    for filename in train_data_list:
+        if i % 200 == 0:
+            print("{}/{}".format(i, len(train_data_list)))
+        i += 1
+        if os.path.exists("utk_data/utk_train/" + filename):
+            gender, age, _, _ = filename.split("_")
+            train_x_data.append(cv2.imread("utk_data/utk_train/" + filename).astype("float32") / 255.)
+            train_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
+            # train_y_age.append(to_categorical(int((int(age) - 10) / 10), num_classes=6))
+
+    i = 0
+    for filename in val_data_list:
+        if i % 200 == 0:
+            print("{}/{}".format(i, len(val_data_list)))
+        i += 1
+        if os.path.exists("utk_data/utk_val/" + filename):
+            gender, age, _, _ = filename.split("_")
+            val_x_data.append(cv2.imread("utk_data/utk_val/" + filename).astype("float32") / 255.)
+            val_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
+            # val_y_age.append(to_categorical(int((int(age) - 10) / 10), num_classes=6))
+
+    i = 0
+    for filename in test_data_list:
+        if i % 200 == 0:
+            print("{}/{}".format(i, len(test_data_list)))
+        i += 1
+        if os.path.exists("utk_data/utk_test/" + filename):
+            gender, age, _, _ = filename.split("_")
+            test_x_data.append(cv2.imread("utk_data/utk_test/" + filename).astype("float32") / 255.)
+            test_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
+            # test_y_age.append(to_categorical(int((int(age) - 10) / 10), num_classes=6))
+
+    train_x_data = np.array(train_x_data)
+    train_y_gender = np.array(train_y_gender)
+    # train_y_age = np.array(train_y_age)
+    val_x_data = np.array(val_x_data)
+    val_y_gender = np.array(val_y_gender)
+    # val_y_age = np.array(val_y_age)
+    test_x_data = np.array(test_x_data)
+    test_y_gender = np.array(test_y_gender)
+    # test_y_age = np.array(test_y_age)
+
+    return train_x_data, train_y_gender, train_y_age, \
+        val_x_data, val_y_gender, val_y_age, \
+        test_x_data, test_y_gender, test_y_age
+
+
+if __name__ == '__main__':
+    load_data()

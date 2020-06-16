@@ -1,6 +1,9 @@
 *.h5
+*.hdf5
 *.json
+*.png
 file_count.py
 graph/
 checkpoint/
 venv/
+utk_*/
