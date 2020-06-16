@@ -8,4 +8,9 @@ It classifies gender and age by taking face images as input. The technology used
 - OpenCV-Python
 
 ## Results from gender predictor
-!["Loss"](plot_img/gender_predictor_plot_loss.png){: width="320px" height="240px"} !["Accuracy"](plot_img/gender_predictor_plot_acc.png){: width="320px" height="240px"}
+<span style="display: inline-block;">
+  <img src="plot_img/gender_predictor_plot_loss.png" width="320" height="240" />
+</span>
+<span style="display: inline-block;">
+  <img src="plot_img/gender_predictor_plot_acc.png" width="320" height="240" />
+</span>
