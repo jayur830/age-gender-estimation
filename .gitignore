@@ -1,13 +1,11 @@
 *.h5
 *.hdf5
 *.json
-*.png
 file_count.py
 graph/
 __pycache__
 checkpoint/
 venv/
-<<<<<<< HEAD
-utk_*/
-=======
->>>>>>> c5dd2468c086b12a9082bd150664836e4defc738
+utk_data/
+utk_metadata/
+
