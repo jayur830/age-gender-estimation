@@ -12,11 +12,11 @@ It classifies gender and age by taking face images as input. The technology used
   <tbody>
     <tr>
       <td>
-        ### Loss
+        <h4>Loss</h4><br />
         <img src="plot_img/gender_predictor_plot_loss.png" width="320" height="240" style="display: inline-block;" />
       </td>
       <td>
-        ### Accuracy
+        <h4>Accuracy</h4><br />
         <img src="plot_img/gender_predictor_plot_acc.png" width="320" height="240" style="display: inline-block;" />
       </td>
     </tr>
