@@ -130,6 +130,7 @@ def create_model():
     #     metrics=["accuracy"])
 
     return model
+<<<<<<< HEAD
 
 import numpy as np
 from keras.utils import to_categorical
@@ -139,3 +140,5 @@ from keras.utils import to_categorical
 #     model.save_weights("model_weights.hdf5")
 #     with open("model_config.json", "w") as json_file:
 #         json_file.write(model.to_json())
+=======
+>>>>>>> c5dd2468c086b12a9082bd150664836e4defc738

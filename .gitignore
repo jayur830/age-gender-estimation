@@ -4,6 +4,10 @@
 *.png
 file_count.py
 graph/
+__pycache__
 checkpoint/
 venv/
+<<<<<<< HEAD
 utk_*/
+=======
+>>>>>>> c5dd2468c086b12a9082bd150664836e4defc738
