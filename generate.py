@@ -32,7 +32,7 @@ for category in data_category:
             if os.path.exists(src_path + data["img_path"]):
                 img = load_img(src_path + data["img_path"])
                 x = img_to_array(img)
-                x = cv2.resize(src=x, dst=x, dsize=(63, 63))
+                # x = cv2.resize(src=x, dst=x, dsize=(63, 63))
                 x = x.reshape((1,) + x.shape)
 
                 j = 0

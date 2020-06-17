@@ -2,16 +2,16 @@
 #
 #
 # def load_data():
-#     root_path = "D:/Dataset/utk_dataset/"
+#     root_path = "D:/Dataset/face_dataset/"
 #     train_x_data = HDF5Matrix(root_path + "train.hdf5", "x_data")
 #     train_y_gender = HDF5Matrix(root_path + "train.hdf5", "y_gender")
 #     train_y_age = HDF5Matrix(root_path + "train.hdf5", "y_age")
-#     val_x_data = HDF5Matrix(root_path + "val.hdf5", "x_data")
-#     val_y_gender = HDF5Matrix(root_path + "val.hdf5", "y_gender")
-#     val_y_age = HDF5Matrix(root_path + "val.hdf5", "y_age")
-#     test_x_data = HDF5Matrix(root_path + "test.hdf5", "x_data")
-#     test_y_gender = HDF5Matrix(root_path + "test.hdf5", "y_gender")
-#     test_y_age = HDF5Matrix(root_path + "test.hdf5", "y_age")
+#     val_x_data = HDF5Matrix(root_path + "test.hdf5", "x_data", end=18036)
+#     val_y_gender = HDF5Matrix(root_path + "test.hdf5", "y_gender", end=18036)
+#     val_y_age = HDF5Matrix(root_path + "test.hdf5", "y_age", end=18036)
+#     test_x_data = HDF5Matrix(root_path + "test.hdf5", "x_data", start=18037)
+#     test_y_gender = HDF5Matrix(root_path + "test.hdf5", "y_gender", start=18037)
+#     test_y_age = HDF5Matrix(root_path + "test.hdf5", "y_age", start=18037)
 #
 #     return train_x_data, train_y_gender, train_y_age, \
 #         val_x_data, val_y_gender, val_y_age, \
@@ -133,6 +133,9 @@ def load_data():
     train_y_gender, val_y_gender, test_y_gender = [], [], []
     train_y_age, val_y_age, test_y_age = [], [], []
 
+    def age_to_index(_age):
+        return int((int(_age) - 10) / 10)
+
     i = 0
     for filename in train_data_list:
         if i % 200 == 0:
@@ -141,8 +144,8 @@ def load_data():
         if os.path.exists("utk_data/utk_train/" + filename):
             gender, age, _, _ = filename.split("_")
             train_x_data.append(cv2.imread("utk_data/utk_train/" + filename).astype("float32") / 255.)
-            train_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
-            # train_y_age.append(to_categorical(int((int(age) - 10) / 10), num_classes=6))
+            # train_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
+            train_y_age.append(to_categorical(age_to_index(age), num_classes=6))
 
     i = 0
     for filename in val_data_list:
@@ -152,8 +155,8 @@ def load_data():
         if os.path.exists("utk_data/utk_val/" + filename):
             gender, age, _, _ = filename.split("_")
             val_x_data.append(cv2.imread("utk_data/utk_val/" + filename).astype("float32") / 255.)
-            val_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
-            # val_y_age.append(to_categorical(int((int(age) - 10) / 10), num_classes=6))
+            # val_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
+            val_y_age.append(to_categorical(age_to_index(age), num_classes=6))
 
     i = 0
     for filename in test_data_list:
@@ -163,23 +166,25 @@ def load_data():
         if os.path.exists("utk_data/utk_test/" + filename):
             gender, age, _, _ = filename.split("_")
             test_x_data.append(cv2.imread("utk_data/utk_test/" + filename).astype("float32") / 255.)
-            test_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
-            # test_y_age.append(to_categorical(int((int(age) - 10) / 10), num_classes=6))
+            # test_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
+            test_y_age.append(to_categorical(age_to_index(age), num_classes=6))
 
     train_x_data = np.array(train_x_data)
-    train_y_gender = np.array(train_y_gender)
-    # train_y_age = np.array(train_y_age)
+    # train_y_gender = np.array(train_y_gender)
+    train_y_age = np.array(train_y_age)
     val_x_data = np.array(val_x_data)
-    val_y_gender = np.array(val_y_gender)
-    # val_y_age = np.array(val_y_age)
+    # val_y_gender = np.array(val_y_gender)
+    val_y_age = np.array(val_y_age)
     test_x_data = np.array(test_x_data)
-    test_y_gender = np.array(test_y_gender)
-    # test_y_age = np.array(test_y_age)
+    # test_y_gender = np.array(test_y_gender)
+    test_y_age = np.array(test_y_age)
 
     return train_x_data, train_y_gender, train_y_age, \
         val_x_data, val_y_gender, val_y_age, \
         test_x_data, test_y_gender, test_y_age
 
 
-if __name__ == '__main__':
-    load_data()
+# import h5py
+#
+# if __name__ == '__main__':
+#     with h5py.File("")

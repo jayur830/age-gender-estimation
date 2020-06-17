@@ -4,7 +4,7 @@ import h5py
 import random
 from keras.utils import to_categorical
 
-dst_path = "D:/Dataset/utk_dataset/"
+dst_path = "D:/Dataset/face_dataset/"
 
 data_category = ["train", "val", "test"]
 data_sizes = [740826, 88902, 83668]

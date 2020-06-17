@@ -136,7 +136,7 @@ def gender_predictor():
 
         model = Model(
             input_layer, gender_predictor,
-            name="age_gender_estimation")
+            name="gender_predictor")
 
         model.load_weights("_gender_predictor_weights.hdf5")
         for layer in model.layers:
