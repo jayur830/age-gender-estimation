@@ -1,8 +1,7 @@
-from keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard
-from keras.utils import plot_model
-from gender_predictor import gender_predictor
-from load_data import load_data
-from plot import plot_eval
+from keras.callbacks import ModelCheckpoint, TensorBoard
+from model.gender_predictor import gender_predictor
+from utils.load_data import load_data
+from utils.plot import plot_eval
 
 if __name__ == "__main__":
     batch_size = 32
