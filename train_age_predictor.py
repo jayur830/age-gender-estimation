@@ -1,4 +1,4 @@
-from keras.callbacks import ModelCheckpoint, EarlyStopping, TensorBoard
+from keras.callbacks import ModelCheckpoint, TensorBoard
 from keras.utils import plot_model
 from age_predictor import age_predictor
 from load_data import load_data
@@ -32,14 +32,14 @@ if __name__ == "__main__":
                 write_images=True)])
 
     plot_eval(history, "Epoch", "Loss", ["loss", "val_loss"])
-    plot_eval(history, "Epoch", "Loss", ["accuracy", "val_accuracy"])
+    plot_eval(history, "Epoch", "Accuracy", ["accuracy", "val_accuracy"])
 
-    test_loss, test_accuracy = \
+    loss, acc = \
             model.evaluate(
                 test_x_data, test_y_age,
                 batch_size=batch_size)
-    print("Test loss: {}".format(test_loss))
-    print("Test accuracy: {}".format(test_accuracy))
+    print("Test loss: {}".format(loss))
+    print("Test acc: {}".format(acc))
     plot_model(model, to_file="age_predictor.png")
     with open("age_predictor_config.json", "w") as json_write:
         json_write.write(model.to_json())

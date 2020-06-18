@@ -138,12 +138,12 @@ def gender_predictor():
             input_layer, gender_predictor,
             name="gender_predictor")
 
-        model.load_weights("_gender_predictor_weights.hdf5")
-        for layer in model.layers:
-            if layer.name == "separable_conv2d_9":
-                break
-            else:
-                layer.trainable = False
+        # model.load_weights("_gender_predictor_weights.hdf5")
+        # for layer in model.layers:
+        #     if layer.name == "separable_conv2d_9":
+        #         break
+        #     else:
+        #         layer.trainable = False
 
         model.summary()
         model.compile(

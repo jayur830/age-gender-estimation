@@ -39,7 +39,7 @@ if __name__ == "__main__":
                 test_x_data, test_y_gender,
                 batch_size=batch_size)
     print("Test loss: {}\nTest accuracy: {}".format(test_loss, test_accuracy))
-    plot_model(model, to_file="gender_predictor.png")
-    with open("gender_predictor_config.json", "w") as json_write:
-        json_write.write(model.to_json())
-    model.save_weights("gender_predictor_weights.hdf5")
+    # plot_model(model, to_file="gender_predictor.png")
+    # with open("gender_predictor_config.json", "w") as json_write:
+    #     json_write.write(model.to_json())
+    # model.save_weights("gender_predictor_weights.hdf5")

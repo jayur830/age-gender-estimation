@@ -4,7 +4,7 @@ from keras.models import Model, model_from_json
 from keras.layers import Input, \
     SeparableConv2D, MaxPool2D, ZeroPadding2D, \
     BatchNormalization, LeakyReLU, \
-    Flatten, Dense, concatenate
+    Flatten, Dense, Concatenate
 import json
 import os
 
@@ -13,7 +13,7 @@ def age_predictor():
     if not os.path.exists("age_predictor_config.json") \
         and not os.path.exists("age_predictor_weights.hdf5"):
         weight_init = "he_normal"
-        LAMBDA = 0.001
+        LAMBDA = 0.01
 
         class SkipLayer:
             def __init__(self, filters=32, kernel_size=(3, 3)):
@@ -51,53 +51,44 @@ def age_predictor():
                 _net = BatchNormalization()(_net)
                 _net = LeakyReLU()(_net)
 
-                return concatenate([_net, _skip_conn])
+                return Concatenate()([_net, _skip_conn])
 
-        # (200, 200)
-        input_layer = Input(shape=(200, 200, 3))
-        # (200, 200) -> (195, 195)
-        net = SkipLayer(filters=16, kernel_size=(6, 6))(input_layer)
-        # (195, 195) -> (190, 190)
-        net = SkipLayer(filters=16, kernel_size=(6, 6))(net)
-        # (190, 190) -> (95, 95)
+        # (63, 63)
+        input_layer = Input(shape=(63, 63, 3))
+        # (63, 63) -> (60, 60)
+        net = SkipLayer(filters=32, kernel_size=(4, 4))(input_layer)
+        # (60, 60) -> (56, 56)
+        net = SkipLayer(filters=32, kernel_size=(5, 5))(net)
+        # (56, 56) -> (28, 28)
         net = MaxPool2D()(net)
-        # (95, 95) -> (92, 92)
-        net = SkipLayer(filters=32, kernel_size=(4, 4))(net)
-        # (92, 92) -> (90, 90)
-        net = SkipLayer(filters=32, kernel_size=(3, 3))(net)
-        # (90, 90) -> (45, 45)
-        net = MaxPool2D()(net)
-        # (45, 45) -> (42, 42)
-        net = SkipLayer(filters=64, kernel_size=(4, 4))(net)
-        # (42, 42) -> (40, 40)
+
+        # (28, 28) -> (26, 26)
         net = SkipLayer(filters=64, kernel_size=(3, 3))(net)
-        # (40, 40) -> (20, 20)
+        # (26, 26) -> (24, 24)
+        net = SkipLayer(filters=64, kernel_size=(3, 3))(net)
+        # (24, 24) -> (12, 12)
         net = MaxPool2D()(net)
-        # (20, 20) -> (18, 18)
+
+        # (12, 12) -> (10, 10)
         net = SkipLayer(filters=128, kernel_size=(3, 3))(net)
-        # (18, 18) -> (16, 16)
+        # (10, 10) -> (8, 8)
         net = SkipLayer(filters=128, kernel_size=(3, 3))(net)
-        # (16, 16) -> (8, 8)
+        # (8, 8) -> (4, 4)
         net = MaxPool2D()(net)
-        # (8, 8) -> (6, 6)
-        net = SkipLayer(filters=256, kernel_size=(3, 3))(net)
-        # (6, 6) -> (4, 4)
-        net = SkipLayer(filters=256, kernel_size=(3, 3))(net)
-        # (4, 4) -> (2, 2)
-        net = MaxPool2D()(net)
-        net = Flatten()(net)
+
+        output = Flatten()(net)
         output = Dense(
             units=6,
             kernel_initializer=weight_init,
             kernel_regularizer=regularizers.l2(LAMBDA),
-            name="pred_age")(net)
+            name="pred_age")(output)
 
         model = Model(
             input_layer, output,
             name="age_predictor")
         model.summary()
         model.compile(
-            optimizer=optimizers.Adam(learning_rate=0.05),
+            optimizer=optimizers.Adam(lr=0.01),
             loss="categorical_crossentropy",
             metrics=["accuracy"])
         return model
@@ -107,7 +98,7 @@ def age_predictor():
             model.load_weights("age_predictor_weights.hdf5")
             model.summary()
             model.compile(
-                optimizer=optimizers.Adam(learning_rate=0.01),
+                optimizer=optimizers.Adam(lr=0.01),
                 loss="categorical_crossentropy",
                 metrics=["accuracy"])
             return model
@@ -117,4 +108,4 @@ if __name__ == "__main__":
     # model = age_predictor()
     # print(model.output)
     # plot_model(model, show_shapes=True)
-    plot_model(age_predictor(), to_file="age_predictor.png", show_shapes=True)
+    plot_model(age_predictor(), to_file="_age_predictor.png", show_shapes=True)
