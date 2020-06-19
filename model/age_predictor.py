@@ -1,50 +1,97 @@
-from keras.optimizers import Adam
-from keras.regularizers import l2
-from keras.models import Model, model_from_json
-from keras.layers import Input, MaxPool2D, Flatten, Dense
-from model.custom_layer import SkipLayer
 import json
 import os
 
+from keras.layers import \
+    Input, Conv2D, MaxPool2D, \
+    Flatten, Dense, \
+    BatchNormalization, LeakyReLU
+from keras.models import Model, model_from_json
+from keras.optimizers import Adam
+from keras.regularizers import l2
+
+from model.custom_layer import SkipLayer
+
 
 def age_predictor():
-    optimizer = Adam(0.05)
+    optimizer = Adam(0.01)
     loss = "categorical_crossentropy"
     metrics = ["accuracy"]
 
     if not os.path.exists("age_predictor_config.json") \
-        and not os.path.exists("age_predictor_weights.hdf5"):
-        regularizer = l2(0.001)
+            and not os.path.exists("age_predictor_weights.hdf5"):
+        weight_init = "he_normal"
+        LAMBDA = 0.01
 
-        # (63, 63)
-        input_layer = Input(shape=(63, 63, 3))
-        # (63, 63) -> (60, 60)
-        net = SkipLayer(filters=8, kernel_size=(4, 4), kernel_regularizer=regularizer)(input_layer)
-        # (60, 60) -> (56, 56)
-        net = SkipLayer(filters=8, kernel_size=(5, 5), kernel_regularizer=regularizer)(net)
-        # (56, 56) -> (28, 28)
+        '''
+        Feature Extraction
+        '''
+        # (100, 100)
+        input_layer = Input(shape=(100, 100, 1))
+        # (100, 100) -> (98, 98)
+        net = SkipLayer(
+            filters=16,
+            kernel_size=(3, 3),
+            kernel_initializer=l2(LAMBDA))(input_layer)
+        # (98, 98) -> (96, 96)
+        net = SkipLayer(
+            filters=16,
+            kernel_size=(3, 3),
+            kernel_initializer=l2(LAMBDA))(net)
+        # (96, 96) -> (48, 48)
         net = MaxPool2D()(net)
-
-        # (28, 28) -> (26, 26)
-        net = SkipLayer(filters=16, kernel_size=(3, 3), kernel_regularizer=regularizer)(net)
-        # (26, 26) -> (24, 24)
-        net = SkipLayer(filters=16, kernel_size=(3, 3), kernel_regularizer=regularizer)(net)
-        # (24, 24) -> (12, 12)
+        # (48, 48) -> (46, 46)
+        net = SkipLayer(
+            filters=32,
+            kernel_size=(3, 3),
+            kernel_initializer=l2(LAMBDA))(net)
+        # (46, 46) -> (44, 44)
+        net = SkipLayer(
+            filters=32,
+            kernel_size=(3, 3),
+            kernel_initializer=l2(LAMBDA))(net)
+        # (44, 44) -> (22, 22)
         net = MaxPool2D()(net)
-
-        # (12, 12) -> (10, 10)
-        net = SkipLayer(filters=32, kernel_size=(3, 3), kernel_regularizer=regularizer)(net)
-        # (10, 10) -> (8, 8)
-        net = SkipLayer(filters=32, kernel_size=(3, 3), kernel_regularizer=regularizer)(net)
-        # (8, 8) -> (4, 4)
+        # (22, 22) -> (20, 20)
+        net = SkipLayer(
+            filters=64,
+            kernel_size=(3, 3),
+            kernel_initializer=l2(LAMBDA))(net)
+        # (20, 20) -> (18, 18)
+        net = SkipLayer(
+            filters=64,
+            kernel_size=(3, 3),
+            kernel_initializer=l2(LAMBDA))(net)
+        # (18, 18) -> (9, 9)
         net = MaxPool2D()(net)
-
-        output = Flatten()(net)
+        # (9, 9) -> (7, 7)
+        net = SkipLayer(
+            filters=128,
+            kernel_size=(3, 3),
+            kernel_initializer=l2(LAMBDA))(net)
+        # (7, 7) -> (4, 4)
+        net = SkipLayer(
+            filters=128,
+            kernel_size=(4, 4),
+            kernel_initializer=l2(LAMBDA))(net)
+        # (4, 4) -> (2, 2)
+        net = MaxPool2D()(net)
+        # Flatten
+        net = Flatten()(net)
+        '''
+        Classification
+        '''
+        net = Dense(
+            units=256,
+            kernel_initializer="he_normal",
+            kernel_regularizer=l2(LAMBDA))(net)
+        net = BatchNormalization()(net)
+        net = LeakyReLU()(net)
         output = Dense(
             units=6,
+            activation="softmax",
             kernel_initializer="he_normal",
-            kernel_regularizer=regularizer,
-            name="pred_age")(output)
+            kernel_regularizer=l2(LAMBDA),
+            name="pred_age")(net)
 
         model = Model(
             input_layer, output,
@@ -63,5 +110,5 @@ def age_predictor():
             model.compile(
                 optimizer=optimizer,
                 loss=loss,
-                metrics=metric)
+                metrics=metrics)
             return model

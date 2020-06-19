@@ -1,15 +1,16 @@
-from keras.callbacks import ModelCheckpoint, TensorBoard
+from keras.callbacks import ModelCheckpoint, TensorBoard, Callback
 from keras.utils import plot_model
 from model.age_predictor import age_predictor
 from utils.load_data import load_data
 from utils.plot import plot_eval
 
+
 if __name__ == "__main__":
     batch_size = 32
 
     train_x_data, _, train_y_age, \
-        val_x_data, _, val_y_age, \
-        test_x_data, _, test_y_age = load_data()
+    val_x_data, _, val_y_age, \
+    test_x_data, _, test_y_age = load_data()
 
     model = age_predictor()
     history = model.fit(
@@ -35,12 +36,13 @@ if __name__ == "__main__":
     plot_eval(history, "Epoch", "Accuracy", ["accuracy", "val_accuracy"])
 
     loss, acc = \
-            model.evaluate(
-                test_x_data, test_y_age,
-                batch_size=batch_size)
+        model.evaluate(
+            test_x_data, test_y_age,
+            batch_size=batch_size)
+
     print("Test loss: {}".format(loss))
     print("Test acc: {}".format(acc))
     plot_model(model, to_file="model/age_predictor.png")
-    with open("age_predictor_config.json", "w") as json_write:
+    with open("model/age_predictor_config.json", "w") as json_write:
         json_write.write(model.to_json())
     model.save_weights("age_predictor_weights.hdf5")

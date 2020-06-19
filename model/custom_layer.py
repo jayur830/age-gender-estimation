@@ -15,34 +15,34 @@ class SkipLayer:
         self.__kernel_regularizer = kernel_regularizer
 
     def __call__(self, inputs):
-        _net = SeparableConv2D(
+        net = SeparableConv2D(
             filters=self.__filters,
             kernel_size=self.__kernel_size,
             kernel_initializer=self.__kernel_initializer,
             kernel_regularizer=self.__kernel_regularizer)(inputs)
-        _net = BatchNormalization()(_net)
-        _skip_conn = _net = LeakyReLU()(_net)
-        _net = SeparableConv2D(
+        net = BatchNormalization()(net)
+        skip_conn = net = LeakyReLU()(net)
+        net = SeparableConv2D(
             filters=self.__filters,
             kernel_size=(1, 1),
             kernel_initializer=self.__kernel_initializer,
-            kernel_regularizer=self.__kernel_regularizer)(_net)
-        _net = BatchNormalization()(_net)
-        _net = LeakyReLU()(_net)
-        _net = SeparableConv2D(
+            kernel_regularizer=self.__kernel_regularizer)(net)
+        net = BatchNormalization()(net)
+        net = LeakyReLU()(net)
+        net = SeparableConv2D(
             filters=self.__filters,
             kernel_size=(3, 3),
             kernel_initializer=self.__kernel_initializer,
-            kernel_regularizer=self.__kernel_regularizer)(_net)
-        _net = ZeroPadding2D()(_net)
-        _net = BatchNormalization()(_net)
-        _net = LeakyReLU()(_net)
-        _net = SeparableConv2D(
+            kernel_regularizer=self.__kernel_regularizer)(net)
+        net = ZeroPadding2D()(net)
+        net = BatchNormalization()(net)
+        net = LeakyReLU()(net)
+        net = SeparableConv2D(
             filters=self.__filters,
             kernel_size=(1, 1),
             kernel_initializer=self.__kernel_initializer,
-            kernel_regularizer=self.__kernel_regularizer)(_net)
-        _net = BatchNormalization()(_net)
-        _net = LeakyReLU()(_net)
+            kernel_regularizer=self.__kernel_regularizer)(net)
+        net = BatchNormalization()(net)
+        net = LeakyReLU()(net)
 
-        return Concatenate()([_net, _skip_conn])
+        return Concatenate()([net, skip_conn])

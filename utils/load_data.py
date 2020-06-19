@@ -146,7 +146,7 @@ def load_data():
         i += 1
         if os.path.exists("utk_data/utk_train/" + filename):
             gender, age, _, _ = filename.split("_")
-            train_x_data.append(cv2.imread("utk_data/utk_train/" + filename).astype("float32") / 255.)
+            train_x_data.append(cv2.resize(cv2.imread("utk_data/utk_train/" + filename, 0), dsize=(100, 100)).reshape(100, 100, 1).astype("float32") / 255.)
             train_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
             train_y_age.append(to_categorical(age_to_index(age), num_classes=6))
 
@@ -157,7 +157,7 @@ def load_data():
         i += 1
         if os.path.exists("utk_data/utk_val/" + filename):
             gender, age, _, _ = filename.split("_")
-            val_x_data.append(cv2.imread("utk_data/utk_val/" + filename).astype("float32") / 255.)
+            val_x_data.append(cv2.resize(cv2.imread("utk_data/utk_val/" + filename, 0), dsize=(100, 100)).reshape(100, 100, 1).astype("float32") / 255.)
             val_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
             val_y_age.append(to_categorical(age_to_index(age), num_classes=6))
 
@@ -168,7 +168,7 @@ def load_data():
         i += 1
         if os.path.exists("utk_data/utk_test/" + filename):
             gender, age, _, _ = filename.split("_")
-            test_x_data.append(cv2.imread("utk_data/utk_test/" + filename).astype("float32") / 255.)
+            test_x_data.append(cv2.resize(cv2.imread("utk_data/utk_test/" + filename, 0), dsize=(100, 100)).reshape(100, 100, 1).astype("float32") / 255.)
             test_y_gender.append(to_categorical(int(gender) ^ 1, num_classes=2))
             test_y_age.append(to_categorical(age_to_index(age), num_classes=6))
 

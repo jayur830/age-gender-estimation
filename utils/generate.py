@@ -15,11 +15,11 @@ if __name__ == '__main__':
         horizontal_flip=True)
 
     for category in data_category:
-        with open("utk_metadata/utk_{}.json".format(category), "r") as json_file:
+        with open("../utk_metadata/utk_{}.json".format(category), "r") as json_file:
             dataset = json.load(json_file)
             src_path = "C:/Users/OwlNight/Dataset/utkcropped/"
             # dst_path = "D:/Dataset/utk_dataset/utk_{}/".format(category)
-            dst_path = "utk_data/utk_{}".format(category)
+            dst_path = "../utk_data/utk_{}".format(category)
             # factor = 100
             factor = 4
             data_size = len(dataset) * factor
@@ -33,7 +33,7 @@ if __name__ == '__main__':
                 if os.path.exists(src_path + data["img_path"]):
                     img = load_img(src_path + data["img_path"])
                     x = img_to_array(img)
-                    x = cv2.resize(src=x, dst=x, dsize=(63, 63))
+                    x = cv2.resize(src=x, dst=x, dsize=(100, 100))
                     x = x.reshape((1,) + x.shape)
 
                     j = 0
